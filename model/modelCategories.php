@@ -28,12 +28,12 @@ class modelCategories {
     public function listAll() {
         try {
 
-            $conn = connenctionDB::connect();
+            $conn = connectionDB::connect();
 
             $list = $conn->query("SELECT * FROM tblCategories");
-            $list->fetchAll(PDO::FETCH_ASSOC);
+            $result = $list->fetchAll(PDO::FETCH_ASSOC);
 
-            return $list;
+            return $result;
             
 
         } catch (PDOException $e) {
