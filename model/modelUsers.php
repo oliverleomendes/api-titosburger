@@ -33,7 +33,11 @@ class modelUsers {
             $save->bindParam(":mail", $username);
             $save->execute();
 
-            
+            $data_user = $this->searchUserByEmail($username);
+
+            $this->saveGroup($data_user['id_user'], $permission);
+
+            return true;
 
         } catch (PDOException $e) {
             return false;
@@ -251,8 +255,18 @@ class modelUsers {
             $password = htmlspecialchars($data["password"], ENT_NOQUOTES);
             $status = filter_var($data["status"], FILTER_SANTIZE_NUMBER_INT);
 
+            $conn = connectionDB::connect();
+            $update = $conn->prepare("UPDATE tblUsers SET firstname = ':firstname', lastname = ':lastname', mail = ':mail', pass_user = ':password', id_status = ':status', updated_at = NOW() WHERE id_user = ':id_user' ");
+            $update->bindParam(':firstname', $firstname);
+            $update->bindParam(':lastname', $lastname);
+            $update->bindParam(':mail', $mail);
+            $update->bindParam(':password', $password);
+            $update->bindParam(':status', $status);
+            $update->execute();
 
-        } catch (PDOExceptio $e) {
+            return true;
+
+        } catch (PDOException $e) {
             return false;
         }
     }

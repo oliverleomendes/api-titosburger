@@ -3,8 +3,8 @@
 class controllerUsers {
 
     public function save($data) {
-        try {
-
+        try {         
+           
             $modelUsers = new modelUsers();
             return $modelUsers->save($data);
 
@@ -13,11 +13,11 @@ class controllerUsers {
         }
     }
 
-    public function update($id_user, $data) {
+    public function saveGroup($id_user, $group) {
         try {
             
             $modelUsers = new modelUsers();
-            return $modelUsers->update($id_user, $data);
+            return $modelUsers->saveGroup($id_user, $group);
 
         } catch (PDOException $e) {
             return false;
@@ -26,7 +26,7 @@ class controllerUsers {
 
     public function auth($data) {
         try {
-            
+
             $modelUsers = new modelUsers();
             return $modelUsers->auth($data);
 
@@ -35,33 +35,22 @@ class controllerUsers {
         }
     }
 
-    public function recoveryPassword($data) {
+    public function generateTwoFactor($data) {
         try {
-            
+
             $modelUsers = new modelUsers();
-            return $modelUsers->recoveryPassword($data);
+            return $modelUsers->generateTwoFactor($data);
 
         } catch (PDOException $e) {
             return false;
         }
     }
 
-    public function validationToken($data) {
+    public function validateTwoFactor($data) {
         try {
-            
+        
             $modelUsers = new modelUsers();
-            return $modelUsers->validationToken($data);
-
-        } catch (PDOException $e) {
-            return false;
-        }
-    }
-
-    public function validationEmail($data) {
-        try {
-            
-            $modelUsers = new modelUsers();
-            return $modelUsers->validationEmail($data);
+            return $modelUsers->validateTwoFactor($data);
 
         } catch (PDOException $e) {
             return false;
@@ -92,11 +81,22 @@ class controllerUsers {
 
     public function delete($id) {
         try {
-            
+         
             $modelUsers = new modelUsers();
             return $modelUsers->delete($id);
+            
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 
-        } catch (PDOExeception $e) {
+    public function update($id, $data) {
+        try {
+            
+            $modelUsers = new modelUsers();
+            return $modelUsers->update($id, $data);
+
+        } catch (PDOException $e) {
             return false;
         }
     }
