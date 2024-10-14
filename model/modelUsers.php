@@ -253,7 +253,7 @@ class modelUsers {
             $lastname = htmlspecialchars($data["lastname"], ENT_NOQUOTES);
             $mail = htmlspecialchars($data["mail"], ENT_NOQUOTES);
             $password = htmlspecialchars($data["password"], ENT_NOQUOTES);
-            $status = filter_var($data["status"], FILTER_SANTIZE_NUMBER_INT);
+            $status = filter_var($data["status"], FILTER_SANITIZE_NUMBER_INT);
 
             $conn = connectionDB::connect();
             $update = $conn->prepare("UPDATE tblUsers SET firstname = :firstname, lastname = :lastname, mail = :mail, pass_user = :password, id_status = :status, updated_at = NOW() WHERE id_user = :id_user ");
