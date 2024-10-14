@@ -8,11 +8,11 @@ class modelUsers {
 
     public function save($data) {
         try {
-         
             $firstname = htmlspecialchars($data["firstname"], ENT_NOQUOTES);
             $lastname  = htmlspecialchars($data["lastname"], ENT_NOQUOTES);
             //Usuário e E-mail = username
             $username  = htmlspecialchars($data["username"], ENT_NOQUOTES);
+            $mail  = htmlspecialchars($data["username"], ENT_NOQUOTES);
             $password  = htmlspecialchars($data["password"], ENT_NOQUOTES);
             $birthday  = htmlspecialchars($data["birthday"], ENT_NOQUOTES);
             $cpf       = filter_var($data["cpf"], FILTER_SANITIZE_NUMBER_INT);
@@ -23,14 +23,14 @@ class modelUsers {
             $password_secure = $this->tokenize($password);
 
             $conn = connectionDB::connect();
-            $save = $conn->prepare("INSERT INTO tblUsers VALUES (':firstname',':lastname',':username',':password_secure',':birthday',':cpf',':mail',1,NOW() )");
+            $save = $conn->prepare("INSERT INTO tblUsers (firstname, lastname, username, pass_user, birthday, cpf, mail, id_status, created_at) VALUES (:firstname, :lastname, :username, :password_secure, :birthday, :cpf, :mail, 1, NOW())");
             $save->bindParam(":firstname", $firstname);
             $save->bindParam(":lastname", $lastname);
             $save->bindParam(":username", $username);
             $save->bindParam(":password_secure", $password_secure);
             $save->bindParam(":birthday", $birthday);
             $save->bindParam(":cpf", $cpf);
-            $save->bindParam(":mail", $username);
+            $save->bindParam(":mail", $mail);
             $save->execute();
 
             $data_user = $this->searchUserByEmail($username);
@@ -39,7 +39,7 @@ class modelUsers {
 
             return true;
 
-        } catch (PDOException $e) {
+        } catch (PDOException $e) {            
             return false;
         }
     }
@@ -60,8 +60,8 @@ class modelUsers {
         try {
             
             $conn = connectionDB::connect();
-            $search = $conn->prepare("SELECT id_user FROM tblUsers WHERE username = ':username' ");
-            $search->bindParam(":username", $username);
+            $search = $conn->prepare("SELECT id_user FROM tblUsers WHERE username = :username");
+            $search->bindParam(':username', $username);
             $search->execute();
             $result = $search->fetch(PDO::FETCH_ASSOC);
 
@@ -76,7 +76,7 @@ class modelUsers {
         try {
             
             $conn = connectionDB::connect();
-            $saveGroup = $conn->prepare("INSERT INTO tblusersroles VALUES (':id_user', ':group') ");
+            $saveGroup = $conn->prepare("INSERT INTO tblusersroles (`id_user`, `group`, `created_at`) VALUES (:id_user, :group, NOW()) ");
             $saveGroup->bindParam(':id_user', $id_user);
             $saveGroup->bindParam(':group', $group);
             $saveGroup->execute();
@@ -94,7 +94,7 @@ class modelUsers {
             $username = htmlspecialchars($data["username"], ENT_NOQUOTES);
             
             $conn = connectionDB::connect();
-            $auth = $conn->prepare("SELECT * FROM tblUsers WHERE username = ':username' ");
+            $auth = $conn->prepare("SELECT * FROM tblUsers WHERE username = :username ");
             $auth->bindParam(':username', $username);
             $auth->execute();
             $result = $auth->fetch(PDO::FETCH_ASSOC);
@@ -133,7 +133,7 @@ class modelUsers {
 
             //Gravar os dados do token
             $conn = connectionDB::connect();
-            $saveToken = $conn->prepare("INSERT INTO tblTokens VALUES (':token', ':username', ':expired') ");
+            $saveToken = $conn->prepare("INSERT INTO tblTokens VALUES (:token, :username, :expired) ");
             $saveToken->bindParam(':token', $finalToken);
             $saveToken->bindParam(':username', $username);
             $saveToken->bindParam(':expired', $expired_at);
@@ -165,7 +165,7 @@ class modelUsers {
             $username = htmlspecialchars($data["username"], ENT_NOQUOTES);
             
             $conn = connectionDB::connect();
-            $validate = $conn->prepare("SELECT * FROM tblTokens WHERE username = ':username' AND token = ':token'");
+            $validate = $conn->prepare("SELECT * FROM tblTokens WHERE username = :username AND token = :token");
             $validate->bindParam(':username', $username);
             $validate->bindParam(':token', $token);
             $validate->execute();
@@ -179,7 +179,7 @@ class modelUsers {
             $expired_at = strtotime($result["expired_at"]); //112545454           
 
             //Deletar o token após uso
-            $deleteToken = $conn->prepare("DELETE FROM tblTokens WHERE username = ':username' AND token = ':token'");
+            $deleteToken = $conn->prepare("DELETE FROM tblTokens WHERE username = :username AND token = :token");
             $deleteToken->bindParam(":username", $username);
             $deleteToken->bindParam(":token", $token);
             $deleteToken->execute();
@@ -216,10 +216,10 @@ class modelUsers {
             $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
 
             $conn = connectionDB::connect();
-            $search = $conn->prepare("SELECT * FROM tblUsers WHERE id_user = ':id_user'");
+            $search = $conn->prepare("SELECT * FROM tblUsers WHERE id_user = :id_user");
             $search->bindParam(":id_user", $id);
             $search->execute();
-            $result = $search->fecth(PDO::FETCH_ASSOC);
+            $result = $search->fetch(PDO::FETCH_ASSOC);
 
             return $result;
 
@@ -234,7 +234,7 @@ class modelUsers {
             $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
 
             $conn = connectionDB::connect();
-            $delete = $conn->prepare("DELETE FROM tblUsers WHERE id_user = ':id_user'");
+            $delete = $conn->prepare("DELETE FROM tblUsers WHERE id_user = :id_user");
             $delete->bindParam(":id_user", $id);
             $delete->execute();
 
@@ -256,7 +256,7 @@ class modelUsers {
             $status = filter_var($data["status"], FILTER_SANTIZE_NUMBER_INT);
 
             $conn = connectionDB::connect();
-            $update = $conn->prepare("UPDATE tblUsers SET firstname = ':firstname', lastname = ':lastname', mail = ':mail', pass_user = ':password', id_status = ':status', updated_at = NOW() WHERE id_user = ':id_user' ");
+            $update = $conn->prepare("UPDATE tblUsers SET firstname = :firstname, lastname = :lastname, mail = :mail, pass_user = :password, id_status = :status, updated_at = NOW() WHERE id_user = :id_user ");
             $update->bindParam(':firstname', $firstname);
             $update->bindParam(':lastname', $lastname);
             $update->bindParam(':mail', $mail);
