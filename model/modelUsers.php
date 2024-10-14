@@ -76,7 +76,7 @@ class modelUsers {
         try {
             
             $conn = connectionDB::connect();
-            $saveGroup = $conn->prepare("INSERT INTO tblusersroles (`id_user`, `group`, `created_at`) VALUES (:id_user, :group, NOW()) ");
+            $saveGroup = $conn->prepare("INSERT INTO tblUsersRoles (`id_user`, `group`, `created_at`) VALUES (:id_user, :group, NOW()) ");
             $saveGroup->bindParam(':id_user', $id_user);
             $saveGroup->bindParam(':group', $group);
             $saveGroup->execute();
@@ -133,7 +133,7 @@ class modelUsers {
 
             //Gravar os dados do token
             $conn = connectionDB::connect();
-            $saveToken = $conn->prepare("INSERT INTO tblTokens VALUES (:token, :username, :expired) ");
+            $saveToken = $conn->prepare("INSERT INTO tblTokens (`token`, `username`, `expired_at`, `created_at`) VALUES (:token, :username, :expired, NOW() ) ");
             $saveToken->bindParam(':token', $finalToken);
             $saveToken->bindParam(':username', $username);
             $saveToken->bindParam(':expired', $expired_at);
