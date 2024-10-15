@@ -8,7 +8,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $data = json_decode(file_get_contents("php://input"), true);
 
     $controllerUsers = new controllerUsers();
-    $genaretToken = $controllerUsers->generateTwoFactor($data);
+    $genaretToken = $controllerUsers->validateTwoFactor($data);
 
     if($genaretToken) {
         $msg = array("msg" => "Token was validated.");

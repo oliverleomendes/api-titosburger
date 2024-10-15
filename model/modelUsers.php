@@ -100,9 +100,9 @@ class modelUsers {
             $result = $auth->fetch(PDO::FETCH_ASSOC);
 
             if($result) {
-                $passwordDB = $result->pass_user;
+                $passwordDB = $result["pass_user"];
 
-                $validatePassword = password_verify($data->password . $this->salt, $passwordDB);
+                $validatePassword = password_verify($data["password"] . $this->salt, $passwordDB);
 
                 if($validatePassword) {
                     return $result;
@@ -128,7 +128,7 @@ class modelUsers {
             $expired_at = date('d/m/Y H:i:s', time() + (15 * 60));
             
             //Gerar token com a data e hora atual com nome do usuário
-            $token = md5(date('d/m/Y H:i:s') . $data->username );
+            $token = md5(date('d/m/Y H:i:s') . $data['username'] );
             $finalToken = substr($token, 6);
 
             //Gravar os dados do token
@@ -171,25 +171,30 @@ class modelUsers {
             $validate->execute();
             $result = $validate->fetch(PDO::FETCH_ASSOC);
 
-            //Obter data e hora atual
-            $now = date('d/m/Y H:i:s');
-            //Converter data atual para validar a expiração
-            $date = strtotime($now); //121354545
-            //Converter data expiração para validar
-            $expired_at = strtotime($result["expired_at"]); //112545454           
+            if($result) {
+                //Obter data e hora atual
+                $now = date('d/m/Y H:i:s');
+                //Converter data atual para validar a expiração
+                $date = strtotime($now); //121354545
+                //Converter data expiração para validar
+                $expired_at = strtotime($result["expired_at"]); //112545454           
 
-            //Deletar o token após uso
-            $deleteToken = $conn->prepare("DELETE FROM tblTokens WHERE username = :username AND token = :token");
-            $deleteToken->bindParam(":username", $username);
-            $deleteToken->bindParam(":token", $token);
-            $deleteToken->execute();
+                //Deletar o token após uso
+                $deleteToken = $conn->prepare("DELETE FROM tblTokens WHERE username = :username AND token = :token");
+                $deleteToken->bindParam(":username", $username);
+                $deleteToken->bindParam(":token", $token);
+                $deleteToken->execute();
 
-            //Validar se a date e hora atual é superior a data expiração
-            if($date > $expired_at) {
-                return false;
+                //Validar se a date e hora atual é superior a data expiração
+                if($date > $expired_at) {
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
-                return true;
+                return false;
             }
+            
 
         } catch (PDOException $e) {
             return false;
