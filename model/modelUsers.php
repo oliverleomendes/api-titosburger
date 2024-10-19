@@ -124,12 +124,18 @@ class modelUsers {
             //Dados recebidos da requisição
             $username = htmlspecialchars($data["username"], ENT_NOQUOTES);
 
+            $fuso = new DateTimeZone('America/Sao_Paulo');
             //Expiração do token em 15 minutos
-            $expired_at = date('d/m/Y H:i:s', time() + (15 * 60));
-            
+            $dataHoraAtual = new DateTime();
+            $dataHoraAtual->setTimezone($fuso);
+            // Adiciona 15 minutos
+            $dataHoraAtual->modify('+1 minutes');
+            // Exibe a nova data e hora
+            $expired_at = $dataHoraAtual->format('Y-m-d H:i:s');
+                        
             //Gerar token com a data e hora atual com nome do usuário
-            $token = md5(date('d/m/Y H:i:s') . $data['username'] );
-            $finalToken = substr($token, 6);
+            $token = md5(date('Y-m-d H:i:s') . $data['username'] );
+            $finalToken = substr($token, 0, 6);
 
             //Gravar os dados do token
             $conn = connectionDB::connect();
@@ -140,10 +146,15 @@ class modelUsers {
             $saveToken->execute();
 
             if($saveToken) {
+                $headers = array(
+                    'From' => "Tito's Burger <no-reply@titosburger.com>",
+                    'X-Mailer' => 'PHP/' . phpversion()
+                );
+                
                 //Texto do corpo do e-mail
                 $message = "Utilize o token: $finalToken";
 
-                $sendMail = mail($username, 'Token', $message);
+                $sendMail = mail($username, "Token", $message, $headers);
 
                 if($sendMail) {
                     return true;
