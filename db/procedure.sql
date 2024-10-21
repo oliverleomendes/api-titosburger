@@ -13,7 +13,7 @@ BEGIN
 	INSERT INTO tblOrders (id_user, id_status, created_at) VALUES (id_user, id_status, NOW() );    
     SET id = (SELECT LAST_INSERT_ID());
     
-    INSERT INTO tblitensorders 
+    INSERT INTO tblItensOrders 
     (id_order, id_product, price_product, qtd, created_at, updated_at)
     SELECT 
         id as id_order,
@@ -22,10 +22,10 @@ BEGIN
         qtd,
         NOW() as created_at,
         NULL as updated_at
-    FROM tblitenscart WHERE id_cart = id_cart;
+    FROM tblItensCart WHERE id_cart = id_cart;
     
-    DELETE FROM tblitenscart WHERE id_cart = id_cart;
-    DELETE FROM tblcart WHERE id_cart = id_cart AND id_user = id_user;
+    -- DELETE FROM tblItensCart WHERE id_cart = id_cart;
+    -- DELETE FROM tblCart WHERE id_cart = id_cart AND id_user = id_user;
 
 END //
 
