@@ -21,6 +21,63 @@ class modelOrders {
         }
     }
 
+    public function createOrder($data) {
+        try {
+         
+            $id_cart = filter_var($data["id_cart"], FILTER_SANITIZE_NUMBER_INT);
+            $id_user = filter_var($data["id_user"], FILTER_SANITIZE_NUMBER_INT);
+
+            $conn = connectionDB::connect();
+            $create = $conn->prepare("CALL spCreateOrder (:id_cart, :id_user, 1)");
+            $create->bindParam(":id_cart", $id_cart);
+            $create->bindParam(":id_user", $id_user);
+            $create->execute();
+
+            return true;
+            
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function updateOrder($id, $data) {
+        try {
+         
+            $id         = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+            $id_status  = filter_var($id_status, FILTER_SANITIZE_NUMBER_INT);
+
+            $conn = connectionDB::connect();
+            $create = $conn->prepare("UPDATE tblOrders SET id_status = :id_status, updated_at = NOW() WHERE id_order = :id_order");
+            $create->bindParam(":id_order", $id);
+            $create->bindParam(":id_status", $id_status);
+            $create->execute();
+
+            return true;
+            
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function detailOrderById($id) {
+        try {
+         
+            $id_order = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+         
+            $conn = connectionDB::connect();
+            $list = $conn->query("SELECT * FROM tblOrders WHERE id_order = :id_order");
+            $list->bindParam(":id_order", $id_order);
+            $list->execute();
+
+            $result = $list->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+            
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
     public function listAllOrders() {
         try {
          
