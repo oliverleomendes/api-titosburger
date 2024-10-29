@@ -13,6 +13,17 @@ class controllerOrders {
         }
     }
 
+    public function listCartByClient($id_user){
+        try {
+         
+            $modelOrders = new modelOrders();
+            return $modelOrders->listCartByClient($id_user);
+            
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
     public function createOrder($data) {
         try {
          

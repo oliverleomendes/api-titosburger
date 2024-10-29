@@ -93,6 +93,26 @@ class modelOrders {
         }
     }
 
+    public function listCartByClient($id_user) {
+        try {
+         
+            $conn = connectionDB::connect();
+
+            $listAll = $conn->prepare("SELECT * FROM tblCarts LEFT JOIN tblItensCart ON tblCarts.id_cart = tblItensCart.id_cart WHERE tblCarts.id_user = :id_user");
+            $list->bindParam(":id_user", $id_user);
+            $list->execute();
+
+            $result = $list->fetchAll(PDO::FETCH_ASSOC);
+
+            return $result;
+
+            return $result;
+            
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
     public function listOrdersByStatus($id_status) {
         try {
          
