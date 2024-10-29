@@ -98,7 +98,10 @@ class modelOrders {
          
             $conn = connectionDB::connect();
 
-            $listAll = $conn->prepare("SELECT * FROM tblCarts LEFT JOIN tblItensCart ON tblCarts.id_cart = tblItensCart.id_cart WHERE tblCarts.id_user = :id_user");
+            $list = $conn->prepare("SELECT * FROM tblCart 
+                                    JOIN tblItensCart ON tblCart.id_cart = tblItensCart.id_cart 
+                                    JOIN tblproducts ON tblItensCart.id_product = tblproducts.id_product 
+                                    WHERE id_user = :id_user");
             $list->bindParam(":id_user", $id_user);
             $list->execute();
 
